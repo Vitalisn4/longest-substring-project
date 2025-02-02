@@ -1,33 +1,36 @@
-name: Rust CI/CD
+name: CI/CD Pipeline
 
 on:
   push:
     branches:
-      - main
+      - master
   pull_request:
     branches:
-      - main
+      - master
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v2
 
       - name: Set up Rust
         uses: actions/setup-rust@v1
         with:
-          rust-version: 'stable'
+          rust-version: stable
 
-      - name: Build the project
-        run: cargo build --release
+      - name: Install Docker
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker.io
 
-      - name: Build Docker image
-        run: docker build -t ghcr.io/${{ github.repository }}/longest_substring:${{ github.sha }} .
+      - name: Build the Docker image
+        run: |
+          docker build -t ghcr.io/vitalisn4/longest-substring-project:latest .
 
-      - name: Login to GitHub Container Registry
+      - name: Log in to GitHub Container Registry (GHCR)
         uses: docker/login-action@v2
         with:
           registry: ghcr.io
@@ -35,4 +38,5 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Push Docker image to GHCR
-        run: docker push ghcr.io/${{ github.repository }}/longest_substring:${{ github.sha }}
+        run: |
+          docker push ghcr.io/vitalisn4/longest-substring-project:latest
