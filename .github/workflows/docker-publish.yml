@@ -26,12 +26,13 @@ jobs:
           username: ${{ github.actor }}  # GitHub username
           password: ${{ secrets.GITHUB_TOKEN }}  # GitHub token to authenticate
 
-      # Step 4: Build Docker image
+      # Step 4: Build Docker image (ensure the name is lowercase)
       - name: Build Docker image
         run: |
-          docker build -t ghcr.io/${{ github.repository }}/longest-substring:latest .
+          docker build -t ghcr.io/${{ github.repository | toLowerCase() }}/longest-substring:latest .
 
       # Step 5: Push Docker image to GitHub Container Registry
       - name: Push Docker image
         run: |
-          docker push ghcr.io/${{ github.repository }}/longest-substring:latest
+          docker push ghcr.io/${{ github.repository | toLowerCase() }}/longest-substring:latest
+
